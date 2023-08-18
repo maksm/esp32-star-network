@@ -44,6 +44,8 @@
 // Photo File Name to save in SPIFFS
 #define FILE_PHOTO "/photo.jpg"
 
+#define SEND_TIMEOUT 1000
+
 // for esp now connect
 extern unsigned long lastConnectNowAttempt;
 extern unsigned long nextConnectNowGap;

@@ -34,22 +34,10 @@ void loop() {
   {
     Serial.println("NOT CONNECTED -> TRY TO CONNECT");
     ScanAndConnectToSlave();
-    // if we connected
-    /*if (isPaired)
-    {
-      blinkIt(150, 2);
-    }
-    else
-    {
-      //nextConnectNowGap *= 2; // dbl the gap (disabled)
-      blinkIt(150, 3); // blink 3 times
-    }*/
-    // save last attmpe
     lastConnectNowAttempt = millis();
   }
 
   // if we are :
-  // 2. The button is LOW (pressed)
   // 3. we are currently not have currentTransmitTotalPackages set
   // 4. the sendNextPackageFlag is not set.
 

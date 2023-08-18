@@ -6,16 +6,13 @@
 
 // Global copy of slave
 esp_now_peer_info_t slave;
-//  B0:A7:32:15:D9:95
+
 uint8_t ReceiverMacID[6] = {0xB0, 0xA7, 0x32, 0x15, 0xD9, 0x95};//Modify this according to the sender board MAC adress (example here for MAC address 10:52:1C:63:3F:B4)
+unsigned long sendStartTime;
  
 void sendData(uint8_t * dataArray, uint8_t dataArrayLength) {
   const uint8_t *peer_addr = slave.peer_addr;
-  //Serial.print("Sending: "); Serial.println(data);
-  //Serial.print("length: "); Serial.println(dataArrayLength);
-
   esp_err_t result = esp_now_send(peer_addr, dataArray, dataArrayLength);
-  //Serial.print("Send Status: ");
   if (result == ESP_OK) {
     //Serial.println("Success");
   } else if (result == ESP_ERR_ESPNOW_NOT_INIT) {
@@ -46,11 +43,12 @@ void startTransmitSPIFFS()//modification to send from SPIFFS, this function open
   currentTransmitTotalPackages = ceil(fileSize / fileDatainMessage);
   Serial.println(currentTransmitTotalPackages);
   uint8_t message[] = {0x01, currentTransmitTotalPackages >> 8, (byte) currentTransmitTotalPackages};
+  sendStartTime = millis();
   sendData(message, sizeof(message));
 }
 
 void sendNextPackage(){
-  // clear the flag
+    // clear the flag
   sendNextPackageFlag = 0;
 
   // if got to AFTER the last package
@@ -118,7 +116,18 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
     sendNextPackageFlag = 1;
     // if nto suecess 0 resent the last one
     if (status != ESP_NOW_SEND_SUCCESS)
+    {
+      // Check for timeout
+      if (millis() - sendStartTime > SEND_TIMEOUT) {
+        Serial.println("Send operation timed out!");
+        currentTransmitCurrentPosition = 0;
+        currentTransmitTotalPackages = 0;
+        sendNextPackageFlag = 0;
+        lastEndTrans = millis();
+        return;
+      }
       currentTransmitCurrentPosition--;
+    }
   } //end if
 }
 
