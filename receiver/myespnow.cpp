@@ -28,10 +28,10 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len) {
       }
       Serial.println();
 
-     Serial.println("Start of new file transmit");
+     logToSD("Start of new file transmit");
       currentTransmitCurrentPosition = 0;
       currentTransmitTotalPackages = (*data++) << 8 | *data;
-      Serial.println("currentTransmitTotalPackages = " + String(currentTransmitTotalPackages));
+      logToSD("currentTransmitTotalPackages = " + String(currentTransmitTotalPackages));
       SD.remove(pictureswitchSTR);
       break;
     case 0x02:
@@ -40,7 +40,7 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len) {
       //Serial.println("chunk NUMBER = " + String(currentTransmitCurrentPosition));
       File file = SD.open(pictureswitchSTR,FILE_APPEND);
       if (!file)
-        Serial.println("Error opening file ...");
+        logToSD("Error opening file ...");
         
       for (int i=0; i < (data_len-3); i++)
       {
@@ -52,13 +52,11 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len) {
 
       if (currentTransmitCurrentPosition == currentTransmitTotalPackages)
       {
-        Serial.println("done file transfer");
+        logToSD("done file transfer");
         SD.open(pictureswitchSTR);
         file.close();
-        Serial.println("File saved and closed.");
+        logToSD("File saved and closed.");
 
-        if(digitalRead(REDLED) == HIGH){digitalWrite(REDLED, LOW);}//change led status after file received
-          else{digitalWrite(REDLED, HIGH);}
         if(pictureswitchSTR == "/picture.jpg"){pictureswitchSTR = "/picturetwo.jpg"; pictureRevSTR = "/picture.jpg";}
           else{ pictureswitchSTR = "/picture.jpg"; pictureRevSTR = "/picturetwo.jpg";}
         copyFile();
@@ -71,10 +69,10 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len) {
 // Init ESP Now with fallback------------------------------------------------------
 void InitESPNow() {
   if (esp_now_init() == ESP_OK) {
-    Serial.println("ESPNow Init Success");
+    logToSD("ESPNow Init Success");
   }
   else {
-    Serial.println("ESPNow Init Failed");
+    logToSD("ESPNow Init Failed");
     ESP.restart();
   }
   // Once ESPNow is successfully Init, we will register for recv CB to

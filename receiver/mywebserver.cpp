@@ -2,6 +2,7 @@
 #include "SD.h"
 
 #include "config.h"
+#include "mysd.h"
 
 //Webserver-------------------------------------------------------------------------
 AsyncWebServer server(80);//Create an Async Web Server on port 80.
@@ -60,5 +61,5 @@ void initWebServer(){
   });
 
   server.begin();
-  Serial.println("Server active!");
+  logToSD("Server active!");
 }

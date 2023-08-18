@@ -1,17 +1,33 @@
 #include "config.h"
 #include "SD.h"
 
+void logToSD(String message) {
+  time_t now = time(NULL);
+  struct tm timeinfo;
+  localtime_r(&now, &timeinfo);
+  char timeStr[25];
+  strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S: ", &timeinfo);
+  Serial.println(String(timeStr) + message);
+  File logFile = SD.open("/log.txt", FILE_WRITE);
+  if (!logFile) {
+    Serial.println("Failed to open log.txt for writing");
+    return;
+  }
+  logFile.println(String(timeStr) + message);
+  logFile.close();
+}
+
 void initSD(){
   //start sd
   if (!SD.begin(5)){Serial.println(F("ERROR: File System Mount Failed!"));}
-  else{Serial.println(F("success init SD"));}
+  else{logToSD("success init SD");}
 }
 
 void copyFile(){
-  Serial.println("Starting copying files");
+  logToSD("Starting copying files");
   File sourceFile = SD.open("/picture.jpg", FILE_READ);
   if (!sourceFile) {
-    Serial.println("Failed to open source file for reading");
+    logToSD("Failed to open source file for reading");
     return;
   }
 
@@ -26,12 +42,11 @@ void copyFile(){
   strftime(&filename[capture_path_len], sizeof(filename) - capture_path_len,
              "/%Y%m%d_%H%M%S.jpg", &timeinfo);
 
-  Serial.print("Copying to: ");
-  Serial.println(filename);
+  logToSD(String("Copying to: ") + filename);
 
   File destFile = SD.open(filename, FILE_WRITE);
   if (!destFile) {
-    Serial.println("Failed to open destination file for writing");
+    logToSD("Failed to open destination file for writing");
     sourceFile.close();
     return;
   }
@@ -44,5 +59,7 @@ void copyFile(){
 
   sourceFile.close();
   destFile.close();
-  Serial.println("Ended copying files");
+  logToSD("Ended copying files");
 }
+
+

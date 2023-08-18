@@ -6,6 +6,7 @@
 
 void setup() {
   pinMode(REDLED, OUTPUT);//red led
+  digitalWrite(REDLED, LOW); // Turn off the LED                         //
   Serial.begin(115200);
   Serial.println("ESP32CAM, Esp-Now receiver");
 

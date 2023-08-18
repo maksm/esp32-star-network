@@ -18,7 +18,7 @@ void setup() {
   Serial.println("CAMERA ESP-NOW MASTER STARTED");
   // init the led's
   pinMode(WHITELED, OUTPUT); pinMode(REDLED, OUTPUT);
-  digitalWrite(WHITELED, LOW); digitalWrite(REDLED, HIGH);
+  digitalWrite(WHITELED, LOW); digitalWrite(REDLED, LOW);
 
   initCamera();
   initSPIFFS();
@@ -35,7 +35,7 @@ void loop() {
     Serial.println("NOT CONNECTED -> TRY TO CONNECT");
     ScanAndConnectToSlave();
     // if we connected
-    if (isPaired)
+    /*if (isPaired)
     {
       blinkIt(150, 2);
     }
@@ -43,7 +43,7 @@ void loop() {
     {
       //nextConnectNowGap *= 2; // dbl the gap (disabled)
       blinkIt(150, 3); // blink 3 times
-    }
+    }*/
     // save last attmpe
     lastConnectNowAttempt = millis();
   }

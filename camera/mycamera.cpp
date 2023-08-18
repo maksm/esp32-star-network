@@ -13,7 +13,6 @@ bool checkPhoto( fs::FS &fs ) {//function to check the photo in spiffs memory
 void capturePhotoSaveSpiffs() {// capture a photo and save to spiffs
   lastphototime = millis();//save last photo time
   takeNextPhotoFlag = 0;//set to don't take new photo
-  if(UseFlashLED == 1){digitalWrite(WHITELED, HIGH);}else{digitalWrite(REDLED, LOW);}//enable LED
   camera_fb_t * fb = NULL; // pointer
     bool ok = 0; // Boolean indicating if the picture has been taken correctly
   
@@ -32,7 +31,6 @@ void capturePhotoSaveSpiffs() {// capture a photo and save to spiffs
     // check if file has been correctly saved in SPIFFS
     ok = checkPhoto(SPIFFS);
   } while ( !ok );
-  if(UseFlashLED == 1){digitalWrite(WHITELED, LOW);}else{digitalWrite(REDLED, HIGH);}//Disable LED if photo sucessfully taken and saved
   if(isPaired)//if device is paired
     startTransmitSPIFFS();//tranmit the file
 }
