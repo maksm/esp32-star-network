@@ -1,0 +1,2 @@
+void configDeviceAP();
+void wifiLoop();
